@@ -38,19 +38,18 @@ public class DIEngine {
                 Class<?> fieldType = field.getType();
 
                 if (isSingleton(fieldType)) {
-                    System.out.println("Singlton");
                     field.set(instance, getSingleton(fieldType));
+                    log(InjectionType.SINGLETON, field, false);
                 }
                 else if (isComponent(fieldType)) {
-                    System.out.println("Componenta");
                     field.set(instance, inject(fieldType));
+                    log(InjectionType.PROTOTYPE, field, true);
                 }
                 else
                     throw new InstantiationException("No Dependency Injection for type: " + fieldType);
 //                else
 //                    field.set(instance, inject(this.dependencyContainer2.getInjection(field.getType())));
             }
-
             return instance;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace();
@@ -59,9 +58,11 @@ public class DIEngine {
     }
 
     private Object getSingleton(Class<?> type) {
-        
-        if (!singletons.containsKey(type))
+
+        if (!singletons.containsKey(type)) {
             singletons.put(type, inject(type));
+        }
+
         return singletons.get(type);
     }
 
@@ -77,5 +78,26 @@ public class DIEngine {
 
     private boolean isQualifier(Class<?> clazz) {
         return clazz.isAnnotationPresent(Qualifier.class);
+    }
+
+    private void log(InjectionType injectionType, Field field, boolean isCreated) {
+        if (!field.getAnnotation(Autowired.class).verbose())
+            return;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("info: ");
+
+        if(isCreated)
+            stringBuilder.append("Creating ");
+        else
+            stringBuilder.append("Using ");
+
+        if (injectionType == InjectionType.SINGLETON)
+            stringBuilder.append("Singleton ");
+        else
+            stringBuilder.append("Component ");
+
+        stringBuilder.append("of type ").append(field.getType());
+        System.out.println(stringBuilder);
     }
 }
