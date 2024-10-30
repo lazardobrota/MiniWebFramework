@@ -1,4 +1,4 @@
-package org.example.anotations;
+package org.example.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Get {
+@Target({ElementType.TYPE, ElementType.FIELD})
+public @interface Qualifier {
+
+    String value();
 }

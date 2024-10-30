@@ -11,6 +11,8 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>FController</module>
+    <module>TestApplication</module>
+    <module>DependencyInjection</module>
   </modules>
 
   <properties>
