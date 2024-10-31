@@ -10,7 +10,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        DIEngine DIEngine = org.example.DIEngine.getInjector(new DependencyContainer2());
+        DIEngine DIEngine = org.example.DIEngine.getInjector(new DependencyContainer());
 
         Test test = DIEngine.inject(Test.class);
         Test test2 = DIEngine.inject(Test.class);

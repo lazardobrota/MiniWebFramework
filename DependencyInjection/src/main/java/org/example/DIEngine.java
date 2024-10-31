@@ -12,14 +12,14 @@ public class DIEngine {
     //private final DependencyContainer2 dependencyContainer2;
     private final Map<Class<?>, Object> singletons;
 
-    private DIEngine(DependencyContainer2 dependencyContainer2) {
+    private DIEngine(DependencyContainer dependencyContainer) {
         singletons = new HashMap<>();
         //this.dependencyContainer2 = dependencyContainer2;
         //this.dependencyContainer2.configure();
     }
 
-    public static DIEngine getInjector(DependencyContainer2 dependencyContainer2) {
-        return new DIEngine(dependencyContainer2);
+    public static DIEngine getInjector(DependencyContainer dependencyContainer) {
+        return new DIEngine(dependencyContainer);
     }
 
     public <T> T inject(Class<T> clazz) {
@@ -27,6 +27,7 @@ public class DIEngine {
     }
 
     //TODO Add Qualifier
+    //TODO Make logger AOP
     private <T> T injectField(Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
