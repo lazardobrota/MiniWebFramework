@@ -2,7 +2,8 @@ package org.example.server;
 
 import org.example.global.Header;
 import org.example.global.Helper;
-import org.example.global.Method;
+import org.example.global.HttpMethod;
+import org.example.reflection.HttpControllers;
 import org.example.request.Request;
 import org.example.response.JsonResponse;
 import org.example.response.Response;
@@ -17,9 +18,11 @@ public class ServerThread implements Runnable {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
+    private final HttpControllers httpControllers;
 
-    public ServerThread(Socket socket) {
+    public ServerThread(Socket socket, HttpControllers httpController) {
         this.socket = socket;
+        this.httpControllers = httpController;
 
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -40,6 +43,10 @@ public class ServerThread implements Runnable {
                 socket.close();
                 return;
             }
+
+            //TODO Reflection
+            httpControllers.callRest(request.getMethod() + " " + request.getLocation());
+            //TODO Find Controller with given url
 
 
             Map<String, Object> responseMap = new HashMap<>();
@@ -67,7 +74,7 @@ public class ServerThread implements Runnable {
         }
 
         String[] actionRow = command.split(" ");
-        Method method = Method.valueOf(actionRow[0]);
+        HttpMethod httpMethod = HttpMethod.valueOf(actionRow[0]);
         String route = actionRow[1];
         Header header = new Header();
         Map<String, String> parameters = Helper.getParamsFromRoute(route);
@@ -80,7 +87,7 @@ public class ServerThread implements Runnable {
             }
         } while(!command.trim().equals(""));
 
-        if(method.equals(Method.POST)) {
+        if(httpMethod.equals(HttpMethod.POST)) {
             int contentLength = Integer.parseInt(header.get("content-length"));
             char[] buff = new char[contentLength];
             in.read(buff, 0, contentLength);
@@ -92,7 +99,7 @@ public class ServerThread implements Runnable {
             }
         }
 
-        Request request = new Request(method, route, header, parameters);
+        Request request = new Request(httpMethod, route, header, parameters);
 
         return request;
     }

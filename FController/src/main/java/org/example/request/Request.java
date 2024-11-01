@@ -1,27 +1,27 @@
 package org.example.request;
 
 import org.example.global.Header;
-import org.example.global.Method;
+import org.example.global.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
-    private final Method method;
+    private final HttpMethod httpMethod;
     private final String location;
     private final Header header;
     private final Map<String, String> parameters;
 
     public Request() {
-        this(Method.GET, "/");
+        this(HttpMethod.GET, "/");
     }
 
-    public Request(Method method, String location) {
-        this(method, location, new Header(), new HashMap<>());
+    public Request(HttpMethod httpMethod, String location) {
+        this(httpMethod, location, new Header(), new HashMap<>());
     }
 
-    public Request(Method method, String location, Header header, Map<String, String> parameters) {
-        this.method = method;
+    public Request(HttpMethod httpMethod, String location, Header header, Map<String, String> parameters) {
+        this.httpMethod = httpMethod;
         this.location = location;
         this.header = header;
         this.parameters = parameters;
@@ -39,12 +39,12 @@ public class Request {
         return new HashMap<String, String>(this.parameters);
     }
 
-    public boolean isMethod(Method method) {
-        return this.getMethod().equals(method);
+    public boolean isMethod(HttpMethod httpMethod) {
+        return this.getMethod().equals(httpMethod);
     }
 
-    public Method getMethod() {
-        return method;
+    public HttpMethod getMethod() {
+        return httpMethod;
     }
 
     public String getLocation() {
