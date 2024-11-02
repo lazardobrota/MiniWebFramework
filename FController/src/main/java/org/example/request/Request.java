@@ -1,27 +1,27 @@
 package org.example.request;
 
 import org.example.global.Header;
-import org.example.global.HttpMethod;
+import org.example.global.HttpMethodEnum;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
-    private final HttpMethod httpMethod;
+    private final HttpMethodEnum httpMethodEnum;
     private final String location;
     private final Header header;
     private final Map<String, String> parameters;
 
     public Request() {
-        this(HttpMethod.GET, "/");
+        this(HttpMethodEnum.GET, "/");
     }
 
-    public Request(HttpMethod httpMethod, String location) {
-        this(httpMethod, location, new Header(), new HashMap<>());
+    public Request(HttpMethodEnum httpMethodEnum, String location) {
+        this(httpMethodEnum, location, new Header(), new HashMap<>());
     }
 
-    public Request(HttpMethod httpMethod, String location, Header header, Map<String, String> parameters) {
-        this.httpMethod = httpMethod;
+    public Request(HttpMethodEnum httpMethodEnum, String location, Header header, Map<String, String> parameters) {
+        this.httpMethodEnum = httpMethodEnum;
         this.location = location;
         this.header = header;
         this.parameters = parameters;
@@ -39,12 +39,12 @@ public class Request {
         return new HashMap<String, String>(this.parameters);
     }
 
-    public boolean isMethod(HttpMethod httpMethod) {
-        return this.getMethod().equals(httpMethod);
+    public boolean isMethod(HttpMethodEnum httpMethodEnum) {
+        return this.getMethod().equals(httpMethodEnum);
     }
 
-    public HttpMethod getMethod() {
-        return httpMethod;
+    public HttpMethodEnum getMethod() {
+        return httpMethodEnum;
     }
 
     public String getLocation() {

@@ -2,8 +2,8 @@ package org.example.server;
 
 import org.example.global.Header;
 import org.example.global.Helper;
-import org.example.global.HttpMethod;
-import org.example.reflection.HttpControllers;
+import org.example.global.HttpMethodEnum;
+import org.example.reflection.HttpController;
 import org.example.request.Request;
 import org.example.response.JsonResponse;
 import org.example.response.Response;
@@ -18,11 +18,11 @@ public class ServerThread implements Runnable {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private final HttpControllers httpControllers;
+    private final HttpController httpController;
 
-    public ServerThread(Socket socket, HttpControllers httpController) {
+    public ServerThread(Socket socket, HttpController httpController) {
         this.socket = socket;
-        this.httpControllers = httpController;
+        this.httpController = httpController;
 
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -45,8 +45,7 @@ public class ServerThread implements Runnable {
             }
 
             //TODO Reflection
-            httpControllers.callRest(request.getMethod() + " " + request.getLocation());
-            //TODO Find Controller with given url
+            httpController.callRest(request.getMethod() + " " + request.getLocation(), request.getParameters());
 
 
             Map<String, Object> responseMap = new HashMap<>();
@@ -74,10 +73,10 @@ public class ServerThread implements Runnable {
         }
 
         String[] actionRow = command.split(" ");
-        HttpMethod httpMethod = HttpMethod.valueOf(actionRow[0]);
-        String route = actionRow[1];
+        HttpMethodEnum httpMethodEnum = HttpMethodEnum.valueOf(actionRow[0]);
+        String wholeRoute = actionRow[1];
         Header header = new Header();
-        Map<String, String> parameters = Helper.getParamsFromRoute(route);
+        Map<String, String> parameters = Helper.getParamsFromRoute(wholeRoute);
 
         do {
             command = in.readLine();
@@ -87,7 +86,7 @@ public class ServerThread implements Runnable {
             }
         } while(!command.trim().equals(""));
 
-        if(httpMethod.equals(HttpMethod.POST)) {
+        if(httpMethodEnum.equals(HttpMethodEnum.POST)) {
             int contentLength = Integer.parseInt(header.get("content-length"));
             char[] buff = new char[contentLength];
             in.read(buff, 0, contentLength);
@@ -99,7 +98,7 @@ public class ServerThread implements Runnable {
             }
         }
 
-        Request request = new Request(httpMethod, route, header, parameters);
+        Request request = new Request(httpMethodEnum, wholeRoute.split("\\?")[0], header, parameters);
 
         return request;
     }

@@ -1,7 +1,7 @@
 package org.example.server;
 
 import org.example.Test;
-import org.example.reflection.HttpControllers;
+import org.example.reflection.HttpController;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,7 +12,7 @@ public class Server {
     public static final int PORT = 8080;
 
     public static void main(String[] args) {
-        HttpControllers httpController = new HttpControllers();
+        HttpController httpController = new HttpController();
         Test test = new Test();
         httpController.generateUrls(Test.class, test);
 

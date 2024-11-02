@@ -1,6 +1,6 @@
 package org.example.global;
 
-public enum HttpMethod {
+public enum HttpMethodEnum {
     GET,
     POST
 }

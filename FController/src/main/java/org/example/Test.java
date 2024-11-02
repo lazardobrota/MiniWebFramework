@@ -1,9 +1,6 @@
 package org.example;
 
-import org.example.annotations.Controller;
-import org.example.annotations.Get;
-import org.example.annotations.Path;
-import org.example.annotations.Post;
+import org.example.annotations.*;
 
 @Controller
 @Path("/user")
@@ -16,8 +13,8 @@ public class Test {
     }
 
     @Get
-    private void get() {
-        System.out.println("GET /user");
+    private void get(@QueryParam("name") String name) {
+        System.out.println("GET /user : " + name);
     }
 
     @Post

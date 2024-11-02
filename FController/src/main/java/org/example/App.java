@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.reflection.HttpController;
-import org.example.reflection.HttpControllers;
 
 /**
  * Hello world!
@@ -14,7 +13,7 @@ public class App
     {
         System.out.println( "Hello World!" );
 
-        HttpControllers httpController = new HttpControllers();
+        HttpController httpController = new HttpController();
         Test test = new Test();
         httpController.generateUrls(Test.class, test);
     }
