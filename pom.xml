@@ -13,6 +13,7 @@
     <module>FController</module>
     <module>TestApplication</module>
     <module>DependencyInjection</module>
+      <module>SprungContextApplication</module>
   </modules>
 
   <properties>

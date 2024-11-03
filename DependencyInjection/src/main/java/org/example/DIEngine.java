@@ -10,10 +10,12 @@ import java.util.Map;
 public class DIEngine {
 
     //private final DependencyContainer2 dependencyContainer2;
-    private final Map<Class<?>, Object> singletons;
+    private final Map<Class<?>, Object> singletons = new HashMap<>();
+
+    public DIEngine() {
+    }
 
     private DIEngine(DependencyContainer dependencyContainer) {
-        singletons = new HashMap<>();
         //this.dependencyContainer2 = dependencyContainer2;
         //this.dependencyContainer2.configure();
     }
@@ -27,7 +29,6 @@ public class DIEngine {
     }
 
     //TODO Add Qualifier
-    //TODO Make logger AOP
     private <T> T injectField(Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();

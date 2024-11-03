@@ -27,4 +27,17 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
+
+    public static void run(HttpController httpController) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
+
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new Thread(new ServerThread(socket, httpController)).start();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

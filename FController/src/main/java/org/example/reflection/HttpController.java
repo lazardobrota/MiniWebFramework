@@ -64,6 +64,9 @@ public class HttpController {
     }
 
     public void callRest(String url, Map<String, String> params) {
+
+        if (url.equals("GET /favicon.ico"))
+            return;
         if (!urlMap.containsKey(url))
             throw new RuntimeException("URL: \"" + url + "\"doesn't exist");
 

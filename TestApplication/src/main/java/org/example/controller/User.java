@@ -1,10 +1,10 @@
-package org.example;
+package org.example.controller;
 
 import org.example.annotations.*;
 
-//@Controller
+@Controller
 @Path("/user")
-public class Test {
+public class User {
 
     @Get
     @Path("/hello")
