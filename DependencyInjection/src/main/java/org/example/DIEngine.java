@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class DIEngine {
 
-    //private final DependencyContainer2 dependencyContainer2;
     private final Map<Class<?>, Object> singletons = new HashMap<>();
     private final DependencyContainer dependencyContainer = new DependencyContainer();
 
@@ -19,7 +18,6 @@ public class DIEngine {
         return injectField(clazz);
     }
 
-    //TODO Add Qualifier
     private <T> T injectField(Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
@@ -28,9 +26,7 @@ public class DIEngine {
                     continue;
                 field.setAccessible(true);
 
-                Class<?> fieldType = field.getType();
-                if (isQualifier(fieldType))
-                    fieldType = this.dependencyContainer.getInjection(fieldType);
+                Class<?> fieldType = getInjectableIfQuailifer(field.getType());
 
                 if (isSingleton(fieldType)) {
                     field.set(instance, getSingleton(fieldType));
@@ -42,14 +38,20 @@ public class DIEngine {
                 }
                 else
                     throw new InstantiationException("No Dependency Injection for type: " + fieldType);
-//                else
-//                    field.set(instance, inject(this.dependencyContainer2.getInjection(field.getType())));
             }
             return instance;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    private Class<?> getInjectableIfQuailifer(Class<?> type) {
+        Class<?> implType = type;
+        if (isQualifier(type))
+            implType = getInjectableIfQuailifer(this.dependencyContainer.getInjection(type));
+
+        return implType;
     }
 
     private Object getSingleton(Class<?> type) {
