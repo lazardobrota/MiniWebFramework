@@ -11,18 +11,9 @@ public class DIEngine {
 
     //private final DependencyContainer2 dependencyContainer2;
     private final Map<Class<?>, Object> singletons = new HashMap<>();
+    private final DependencyContainer dependencyContainer = new DependencyContainer();
 
-    public DIEngine() {
-    }
 
-    private DIEngine(DependencyContainer dependencyContainer) {
-        //this.dependencyContainer2 = dependencyContainer2;
-        //this.dependencyContainer2.configure();
-    }
-
-    public static DIEngine getInjector(DependencyContainer dependencyContainer) {
-        return new DIEngine(dependencyContainer);
-    }
 
     public <T> T inject(Class<T> clazz) {
         return injectField(clazz);
@@ -38,6 +29,8 @@ public class DIEngine {
                 field.setAccessible(true);
 
                 Class<?> fieldType = field.getType();
+                if (isQualifier(fieldType))
+                    fieldType = this.dependencyContainer.getInjection(fieldType);
 
                 if (isSingleton(fieldType)) {
                     field.set(instance, getSingleton(fieldType));

@@ -5,7 +5,7 @@ import org.example.annotations.Autowired;
 public class Test {
 
     @Autowired
-    private MyLogger logger;
+    private Logger logger;
 
     public void log() {
         logger.log("whyy");
