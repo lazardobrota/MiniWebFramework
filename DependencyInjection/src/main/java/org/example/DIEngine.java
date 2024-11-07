@@ -18,6 +18,7 @@ public class DIEngine {
         return injectField(clazz);
     }
 
+    //TODO Logger for newInstance
     private <T> T injectField(Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
@@ -39,6 +40,7 @@ public class DIEngine {
                 else
                     throw new InstantiationException("No Dependency Injection for type: " + fieldType);
             }
+            //TODO Logger for newInstance
             return instance;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace();

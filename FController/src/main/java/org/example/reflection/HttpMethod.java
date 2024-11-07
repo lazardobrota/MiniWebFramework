@@ -1,7 +1,6 @@
 package org.example.reflection;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 public class HttpMethod {
     private Object controller;
@@ -10,10 +9,6 @@ public class HttpMethod {
     public HttpMethod(Object controller, Method method) {
         this.controller = controller;
         this.method = method;
-    }
-
-    public void addValidParams() {
-
     }
 
     public Object getController() {

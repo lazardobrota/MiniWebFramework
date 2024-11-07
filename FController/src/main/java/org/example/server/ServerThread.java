@@ -5,12 +5,9 @@ import org.example.global.Helper;
 import org.example.global.HttpMethodEnum;
 import org.example.reflection.HttpController;
 import org.example.request.Request;
-import org.example.response.JsonResponse;
-import org.example.response.Response;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ServerThread implements Runnable {
@@ -45,16 +42,9 @@ public class ServerThread implements Runnable {
             }
 
             //TODO Reflection
-            httpController.callRest(request.getMethod() + " " + request.getLocation(), request.getParameters());
+            String response = httpController.callRest(request.getMethod() + " " + request.getLocation(), request.getParameters());
 
-
-            Map<String, Object> responseMap = new HashMap<>();
-            responseMap.put("route_location", request.getLocation());
-            responseMap.put("route_method", request.getMethod().toString());
-            responseMap.put("parameters", request.getParameters());
-            Response response = new JsonResponse(responseMap);
-
-            out.println(response.render());
+            out.println(response);
 
             in.close();
             out.close();
@@ -87,9 +77,9 @@ public class ServerThread implements Runnable {
         } while(!command.trim().equals(""));
 
         if(httpMethodEnum.equals(HttpMethodEnum.POST)) {
-            int contentLength = Integer.parseInt(header.get("content-length"));
+            int contentLength = Integer.parseInt(header.get("Content-Length"));
             char[] buff = new char[contentLength];
-            in.read(buff, 0, contentLength);
+            in.read(buff);
             String parametersString = new String(buff);
 
             Map<String, String> postParameters = Helper.getParamsFromQuery(parametersString);

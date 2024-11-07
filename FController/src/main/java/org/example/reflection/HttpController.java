@@ -63,10 +63,10 @@ public class HttpController {
         return null;
     }
 
-    public void callRest(String url, Map<String, String> params) {
+    public String callRest(String url, Map<String, String> params) {
 
         if (url.equals("GET /favicon.ico"))
-            return;
+            return "";
         if (!urlMap.containsKey(url))
             throw new RuntimeException("URL: \"" + url + "\"doesn't exist");
 
@@ -74,9 +74,10 @@ public class HttpController {
 
         try {
             Method method =  httpMethod.getMethod();
+            Object value;
             method.setAccessible(true);
             if (method.getParameters().length == 0)
-                method.invoke(httpMethod.getController());
+                value = method.invoke(httpMethod.getController());
             else {
                 Object[] arguments = new Object[method.getParameters().length];
                 int index = -1;
@@ -97,11 +98,17 @@ public class HttpController {
                     arguments[index] = cast(params.get(queryParam.value()), parameter.getType());
                 }
 
-                method.invoke(httpMethod.getController(), arguments);
+                value = method.invoke(httpMethod.getController(), arguments);
+            }
+
+            if (value != null)  {
+                return (String) value;
             }
             method.setAccessible(false);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+
+        return "";
     }
 }

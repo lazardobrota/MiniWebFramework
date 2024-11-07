@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.annotations.*;
 
-//@Controller
+@Controller
 @Path("/user")
 public class Test {
 

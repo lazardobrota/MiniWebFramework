@@ -1,7 +1,5 @@
 package org.example.global;
 
-import org.example.annotations.Controller;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +8,7 @@ public class Helper {
     public static Map<String, String> getParamsFromRoute(String route) {
         String[] splittedRoute = route.split("\\?");
         if(splittedRoute.length == 1) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
 
         return Helper.getParamsFromQuery(splittedRoute[1]);
