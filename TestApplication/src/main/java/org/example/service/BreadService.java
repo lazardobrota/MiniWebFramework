@@ -1,11 +1,13 @@
 package org.example.service;
 
+import org.example.annotations.Autowired;
 import org.example.annotations.Service;
-
-import java.util.List;
 
 @Service
 public class BreadService {
+
+    @Autowired
+    private UserService userService;
 
     public String site() {
         StringBuilder htmlBody = new StringBuilder("<body>" +

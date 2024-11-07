@@ -4,6 +4,7 @@ import org.example.annotations.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,6 @@ public class DIEngine {
         return injectField(clazz);
     }
 
-    //TODO Logger for newInstance
     private <T> T injectField(Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
@@ -29,18 +29,22 @@ public class DIEngine {
 
                 Class<?> fieldType = getInjectableIfQuailifer(field.getType());
 
+                Object fieldInstance;
+
                 if (isSingleton(fieldType)) {
-                    field.set(instance, getSingleton(fieldType));
-                    log(InjectionType.SINGLETON, field, false);
+                    fieldInstance = getSingleton(fieldType);
+                    field.set(instance, fieldInstance);
                 }
                 else if (isComponent(fieldType)) {
-                    field.set(instance, inject(fieldType));
-                    log(InjectionType.PROTOTYPE, field, true);
+                    fieldInstance = inject(fieldType);
+                    field.set(instance, fieldInstance);
                 }
                 else
                     throw new InstantiationException("No Dependency Injection for type: " + fieldType);
+
+                log2(fieldInstance, field, clazz);
             }
-            //TODO Logger for newInstance
+
             return instance;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace();
@@ -98,5 +102,15 @@ public class DIEngine {
 
         stringBuilder.append("of type ").append(field.getType());
         System.out.println(stringBuilder);
+    }
+
+    private void log2(Object instance, Field field, Class<?> parentClazz) {
+        String str = "Initialized: " +
+                field.getType().getSimpleName() + ' ' +
+                field.getName() + " in " +
+                parentClazz.getSimpleName() + " on " +
+                LocalDateTime.now() + " with " +
+                System.identityHashCode(instance);
+        System.out.println(str);
     }
 }
