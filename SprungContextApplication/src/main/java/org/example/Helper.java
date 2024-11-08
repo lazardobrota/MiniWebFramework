@@ -10,13 +10,26 @@ import java.util.stream.Collectors;
 
 public class Helper {
 
+    private static final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
     public static Set<Class<?>> getAllClassesWithAnnotation(Class<?> annotation) throws IOException {
         return ClassPath.from(Helper.class.getClassLoader())
                 .getAllClasses()
                 .stream()
-                .filter(classInfo -> !classInfo.getName().contains("module-info"))
-                .map(ClassPath.ClassInfo::load)
+                .map(Helper::loadClass)
+                .filter(Objects::nonNull)
                 .filter(clazz -> clazz.isAnnotationPresent(annotation.asSubclass(java.lang.annotation.Annotation.class)))
                 .collect(Collectors.toSet());
     }
+
+    private static Class<?> loadClass(ClassPath.ClassInfo clazz) {
+        try {
+            return classLoader.loadClass(clazz.getName());
+        }
+        catch (Exception | Error ignore) {
+            return null;
+        }
+    }
+
+
 }

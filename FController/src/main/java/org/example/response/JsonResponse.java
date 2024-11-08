@@ -1,14 +1,14 @@
 package org.example.response;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonResponse extends Response{
 
-    private Gson gson;
+    private final ObjectMapper mapper = new ObjectMapper();
     private Object jsonObject;
 
     public JsonResponse(Object jsonObject) {
-        this.gson = new Gson();
         this.jsonObject = jsonObject;
     }
 
@@ -22,8 +22,16 @@ public class JsonResponse extends Response{
         }
         responseContent.append("\n");
 
-        responseContent.append(this.gson.toJson(this.jsonObject));
+        responseContent.append(toJson(this.jsonObject));
 
         return responseContent.toString();
+    }
+
+    public String toJson(Object jsonObject) {
+        try {
+            return mapper.writeValueAsString(jsonObject);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

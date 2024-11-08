@@ -1,11 +1,10 @@
 package org.example.controller;
 
 import org.example.annotations.*;
-import org.example.service.BreadService;
 
 @Controller
 @Path("/user")
-public class User {
+public class UserController {
 
     @Get
     @Path("/hello")

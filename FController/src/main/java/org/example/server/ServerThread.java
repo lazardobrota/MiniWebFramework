@@ -1,12 +1,18 @@
 package org.example.server;
 
+import org.example.annotations.QueryParam;
 import org.example.global.Header;
 import org.example.global.Helper;
 import org.example.global.HttpMethodEnum;
 import org.example.reflection.HttpController;
+import org.example.reflection.HttpMethod;
 import org.example.request.Request;
+import org.example.response.JsonResponse;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.Socket;
 import java.util.Map;
 
@@ -41,10 +47,42 @@ public class ServerThread implements Runnable {
                 return;
             }
 
-            //TODO Reflection
-            String response = httpController.callRest(request.getMethod() + " " + request.getLocation(), request.getParameters());
+            HttpMethod httpMethod = httpController.getMethod(request.getMethod() + " " + request.getLocation());
 
-            out.println(response);
+            Method method =  httpMethod.getMethod();
+            Object value;
+
+            try {
+                method.setAccessible(true);
+                if (method.getParameters().length == 0)
+                    value = method.invoke(httpMethod.getController());
+                else {
+                    Object[] arguments = new Object[method.getParameters().length];
+                    int index = -1;
+                    for (Parameter parameter : method.getParameters()) {
+                        index++;
+
+                        if (!parameter.isAnnotationPresent(QueryParam.class)) {
+                            arguments[index] = null;
+                            continue;
+                        }
+                        QueryParam queryParam = parameter.getAnnotation(QueryParam.class);
+
+                        if (!request.getParameters().containsKey(queryParam.value())) {
+                            arguments[index] = null;
+                            continue;
+                        }
+
+                        arguments[index] = HttpController.cast(request.getParameters().get(queryParam.value()), parameter.getType());
+                    }
+
+                    value = method.invoke(httpMethod.getController(), arguments);
+                }
+                out.println(new JsonResponse(value).render());
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
 
             in.close();
             out.close();
@@ -82,10 +120,11 @@ public class ServerThread implements Runnable {
             in.read(buff);
             String parametersString = new String(buff);
 
-            Map<String, String> postParameters = Helper.getParamsFromQuery(parametersString);
-            for (String parameterName : postParameters.keySet()) {
-                parameters.put(parameterName, postParameters.get(parameterName));
-            }
+
+//            Map<String, String> postParameters = Helper.getParamsFromQuery(parametersString);
+//            for (String parameterName : postParameters.keySet()) {
+//                parameters.put(parameterName, postParameters.get(parameterName));
+//            }
         }
 
         Request request = new Request(httpMethodEnum, wholeRoute.split("\\?")[0], header, parameters);
