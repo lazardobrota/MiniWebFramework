@@ -11,9 +11,6 @@ import java.util.Map;
 public class DIEngine {
 
     private final Map<Class<?>, Object> singletons = new HashMap<>();
-    private final DependencyContainer dependencyContainer = new DependencyContainer();
-
-
 
     public <T> T inject(Class<T> clazz) {
         return injectField(clazz);
