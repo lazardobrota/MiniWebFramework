@@ -4,7 +4,7 @@ import org.example.annotations.Bean;
 import org.example.annotations.Component;
 import org.example.annotations.Service;
 
-@Service
+@Component
 public class MyLogger implements Logger{
     int counter = 0;
     public MyLogger() {

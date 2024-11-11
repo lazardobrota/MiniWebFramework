@@ -27,7 +27,7 @@ public class DIEngine {
                     continue;
                 field.setAccessible(true);
 
-                Class<?> fieldType = getInjectableIfQuailifer(field.getType());
+                Class<?> fieldType = getInjectableIfQualifier(field);
 
                 Object fieldInstance;
 
@@ -52,12 +52,17 @@ public class DIEngine {
         return null;
     }
 
-    private Class<?> getInjectableIfQuailifer(Class<?> type) {
-        Class<?> implType = type;
-        if (isQualifier(type))
-            implType = getInjectableIfQuailifer(this.dependencyContainer.getInjection(type));
+    private Class<?> getInjectableIfQualifier(Field field) {
+        if (!field.isAnnotationPresent(Qualifier.class))
+            return field.getType();
 
-        return implType;
+        Qualifier qualifier = field.getAnnotation(Qualifier.class);
+
+        Class<?> type = field.getType();
+        if (!type.isAssignableFrom(qualifier.impl()))
+            throw new RuntimeException("Invalid implementation for qualifier with type " + type);
+
+        return qualifier.impl().asSubclass(type);
     }
 
     private Object getSingleton(Class<?> type) {
@@ -81,27 +86,6 @@ public class DIEngine {
 
     private boolean isQualifier(Class<?> clazz) {
         return clazz.isAnnotationPresent(Qualifier.class);
-    }
-
-    private void log(InjectionType injectionType, Field field, boolean isCreated) {
-        if (!field.getAnnotation(Autowired.class).verbose())
-            return;
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("info: ");
-
-        if(isCreated)
-            stringBuilder.append("Creating ");
-        else
-            stringBuilder.append("Using ");
-
-        if (injectionType == InjectionType.SINGLETON)
-            stringBuilder.append("Singleton ");
-        else
-            stringBuilder.append("Component ");
-
-        stringBuilder.append("of type ").append(field.getType());
-        System.out.println(stringBuilder);
     }
 
     private void log2(Object instance, Field field, Class<?> parentClazz) {
